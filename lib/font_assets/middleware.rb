@@ -13,23 +13,26 @@ module FontAssets
 
     def access_control_headers
       {
-        "Access-Control-Allow-Origin" => origin,
-        "Access-Control-Allow-Methods" => "GET",
-        "Access-Control-Allow-Headers" => "x-requested-with",
-        "Access-Control-Max-Age" => "3628800"
+        'Access-Control-Allow-Origin' => origin,
+        'Access-Control-Allow-Methods' => 'GET',
+        'Access-Control-Allow-Headers' => 'x-requested-with',
+        'Access-Control-Max-Age' => '3628800'
       }
     end
 
     def call(env)
-      @ssl_request = Rack::Request.new(env).scheme == "https"
-      # intercept the "preflight" request
-      if env["REQUEST_METHOD"] == "OPTIONS"
-        return [200, access_control_headers, []]
-      else
-        code, headers, body = @app.call(env)
-        set_headers! headers, body, env["PATH_INFO"]
-        [code, headers, body]
+      @ssl_request = Rack::Request.new(env).scheme == 'https'
+
+      code, headers, body = @app.call(env)
+
+      if (ext = extension(env['PATH_INFO'])) && font_asset?(ext)
+        return [200, access_control_headers, []] if env['REQUEST_METHOD'] == 'OPTIONS'
+
+        headers.merge!(access_control_headers)
+        headers.merge!('Content-Type' => mime_type(ext)) if headers['Content-Type']
       end
+
+      [code, headers, body]
     end
 
 
@@ -38,7 +41,7 @@ module FontAssets
     def origin
       if !wildcard_origin? and allow_ssl? and ssl_request?
         uri = URI(@origin)
-        uri.scheme = "https"
+        uri.scheme = 'https'
         uri.to_s
       else
         @origin
@@ -61,19 +64,12 @@ module FontAssets
       if path.nil? || path.length == 0
         nil
       else
-        "." + path.split("?").first.split(".").last
+        '.' + path.split('?').first.split('.').last
       end
     end
 
     def font_asset?(path)
       @mime_types.font? extension(path)
-    end
-
-    def set_headers!(headers, body, path)
-      if ext = extension(path) and font_asset?(ext)
-        headers.merge!(access_control_headers)
-        headers.merge!('Content-Type' => mime_type(ext)) if headers['Content-Type']
-      end
     end
 
     def mime_type(extension)

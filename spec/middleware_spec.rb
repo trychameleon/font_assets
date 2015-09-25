@@ -18,8 +18,8 @@ describe FontAssets::Middleware do
           context 'the response headers' do
             subject { response[1] }
 
-            its(["Access-Control-Allow-Headers"]) { should == "x-requested-with" }
-            its(["Access-Control-Max-Age"]) { should == "3628800" }
+            its(['Access-Control-Allow-Headers']) { should == 'x-requested-with' }
+            its(['Access-Control-Max-Age']) { should == '3628800' }
             its(['Access-Control-Allow-Methods']) { should == 'GET' }
             its(['Access-Control-Allow-Origin']) { should == 'https://test.origin' }
             its(['Content-Type']) { should == 'application/x-font-ttf' }
@@ -32,8 +32,8 @@ describe FontAssets::Middleware do
           context 'the response headers' do
             subject { response[1] }
 
-            its(["Access-Control-Allow-Headers"]) { should == "x-requested-with" }
-            its(["Access-Control-Max-Age"]) { should == "3628800" }
+            its(['Access-Control-Allow-Headers']) { should == 'x-requested-with' }
+            its(['Access-Control-Max-Age']) { should == '3628800' }
             its(['Access-Control-Allow-Methods']) { should == 'GET' }
             its(['Access-Control-Allow-Origin']) { should == 'http://test.origin' }
             its(['Content-Type']) { should == 'application/x-font-ttf' }
@@ -51,8 +51,8 @@ describe FontAssets::Middleware do
           context 'the response headers' do
             subject { response[1] }
 
-            its(["Access-Control-Allow-Headers"]) { should == "x-requested-with" }
-            its(["Access-Control-Max-Age"]) { should == "3628800" }
+            its(['Access-Control-Allow-Headers']) { should == 'x-requested-with' }
+            its(['Access-Control-Max-Age']) { should == '3628800' }
             its(['Access-Control-Allow-Methods']) { should == 'GET' }
             its(['Access-Control-Allow-Origin']) { should == '*' }
             its(['Content-Type']) { should == 'application/x-font-ttf' }
@@ -65,8 +65,8 @@ describe FontAssets::Middleware do
           context 'the response headers' do
             subject { response[1] }
 
-            its(["Access-Control-Allow-Headers"]) { should == "x-requested-with" }
-            its(["Access-Control-Max-Age"]) { should == "3628800" }
+            its(['Access-Control-Allow-Headers']) { should == 'x-requested-with' }
+            its(['Access-Control-Max-Age']) { should == '3628800' }
             its(['Access-Control-Allow-Methods']) { should == 'GET' }
             its(['Access-Control-Allow-Origin']) { should == '*' }
             its(['Content-Type']) { should == 'application/x-font-ttf' }
@@ -81,8 +81,8 @@ describe FontAssets::Middleware do
         context 'the response headers' do
           subject { response[1] }
 
-          its(["Access-Control-Allow-Headers"]) { should == "x-requested-with" }
-          its(["Access-Control-Max-Age"]) { should == "3628800" }
+          its(['Access-Control-Allow-Headers']) { should == 'x-requested-with' }
+          its(['Access-Control-Max-Age']) { should == '3628800' }
           its(['Access-Control-Allow-Methods']) { should == 'GET' }
           its(['Access-Control-Allow-Origin']) { should == 'http://test.origin' }
           its(['Content-Type']) { should == 'application/x-font-ttf' }
@@ -97,8 +97,8 @@ describe FontAssets::Middleware do
       context 'the response headers' do
         subject { response[1] }
 
-        its(["Access-Control-Allow-Headers"]) { should be_nil }
-        its(["Access-Control-Max-Age"]) { should be_nil }
+        its(['Access-Control-Allow-Headers']) { should be_nil }
+        its(['Access-Control-Max-Age']) { should be_nil }
         its(['Access-Control-Allow-Methods']) { should be_nil }
         its(['Access-Control-Allow-Origin']) { should be_nil }
         its(['Content-Type']) { should == 'text/plain' }
@@ -112,8 +112,8 @@ describe FontAssets::Middleware do
       context 'the response headers' do
         subject { response[1] }
 
-        its(["Access-Control-Allow-Headers"]) { should be_nil }
-        its(["Access-Control-Max-Age"]) { should be_nil }
+        its(['Access-Control-Allow-Headers']) { should be_nil }
+        its(['Access-Control-Max-Age']) { should be_nil }
         its(['Access-Control-Allow-Methods']) { should be_nil }
         its(['Access-Control-Allow-Origin']) { should be_nil }
         its(['Content-Type']) { should == 'text/plain' }
@@ -127,8 +127,8 @@ describe FontAssets::Middleware do
       context 'the response headers' do
         subject { response[1] }
 
-        its(["Access-Control-Allow-Headers"]) { should be_nil }
-        its(["Access-Control-Max-Age"]) { should be_nil }
+        its(['Access-Control-Allow-Headers']) { should be_nil }
+        its(['Access-Control-Max-Age']) { should be_nil }
         its(['Access-Control-Allow-Methods']) { should be_nil }
         its(['Access-Control-Allow-Origin']) { should be_nil }
         its(['Content-Type']) { should == 'text/plain' }
@@ -143,13 +143,13 @@ describe FontAssets::Middleware do
     context 'the response headers' do
       subject { response[1] }
 
-      its(["Access-Control-Allow-Headers"]) { should == "x-requested-with" }
-      its(["Access-Control-Max-Age"]) { should == "3628800" }
+      its(['Access-Control-Allow-Headers']) { should == 'x-requested-with' }
+      its(['Access-Control-Max-Age']) { should == '3628800' }
       its(['Access-Control-Allow-Methods']) { should == 'GET' }
       its(['Access-Control-Allow-Origin']) { should == 'http://test.options' }
 
       it 'should not contain a Content-Type' do
-        subject['Content-Type'].should be_nil
+        expect(subject['Content-Type']).to be_nil
       end
     end
 
@@ -157,11 +157,25 @@ describe FontAssets::Middleware do
       subject { response[2] }
       it { should be_empty }
     end
+
+    context 'to non-font assets' do
+      let(:app) { load_app }
+      let(:response) { request app, '/users.json', :method => 'OPTIONS' }
+
+      context 'the response headers' do
+        subject { response[1] }
+
+        its(['Access-Control-Allow-Headers']) { should be_nil }
+        its(['Access-Control-Max-Age']) { should be_nil }
+        its(['Access-Control-Allow-Methods']) { should be_nil }
+        its(['Access-Control-Allow-Origin']) { should be_nil }
+        its(['Content-Type']) { should == 'text/plain' }
+      end
+    end
+
   end
 
-
   private
-
 
   def load_app(origin = 'http://test.local', options={})
     FontAssets::Middleware.new(inner_app, origin, options)
